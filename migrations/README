@@ -1,0 +1,23 @@
+Generic single-database configuration.
+
+### Adding a new model or changes
+1. We need to run the definition of our models by import the corresponding scripts. For example,
+`from models.user import User`
+
+2. Create a migration script.
+`alembic revision --autogenerate -m "<your message>"`
+    
+3. Running the migration to update the database.
+`alembic upgrade head`
+    
+
+### Other basic and useful commands
+
+1. `alembic current`
+2. `alembic history --verbose`
+3. `alembic upgrade <revision>`. For example, `alembic upgrade +2` migrates 2 version ahead. `alembic upgrade ae10+2` upgrades to revision 2 steps ahead of `ae1027a6acf`. `alembic upgrade head` upgrades revision to latest revision.
+4. `alembic downgrade <revision>`. For example, `alembic downgrade -1` reverses the current migration by 1 revision. `alembic downgrade base` migrates revision to the very beginning.
+
+### Reference
+
+https://stackoverflow.com/questions/68932099/how-to-get-alembic-to-recognise-sqlmodel-database-model
