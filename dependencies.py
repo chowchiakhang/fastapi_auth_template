@@ -6,24 +6,16 @@ from jwt import InvalidTokenError
 from sqlmodel import select
 
 from database_engine.postgres_engine import SessionDep
+from models.user import User as UserModel
 from routers.users.schema import TokenData, User
 from security.context import decode
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
-fake_users_db = {
-    "johndoe": {
-        "username": "johndoe",
-        "full_name": "John Doe",
-        "email": "johndoe@example.com",
-        "hashed_password": "$2b$12$B3ilkC1/HxDjV0ETDZZd1OihrRZWC1tIpsyCP2EpKqvTNro3yiy.i",
-        "disabled": False,
-    }
-}
 
 def get_user(session: SessionDep, username: str):
-    statement = select(User).where(User.username == username)
+    statement = select(UserModel).where(UserModel.username == username)
     session_user = session.exec(statement).first()
     return session_user
 
