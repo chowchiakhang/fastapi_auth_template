@@ -7,7 +7,7 @@ from sqlmodel import select
 
 from database_engine.postgres_engine import SessionDep
 from models.user import User as UserModel
-from routers.users.schema import TokenData, User
+from routers.users.schema import TokenData
 from security.context import decode
 
 
@@ -19,7 +19,7 @@ def get_user(session: SessionDep, username: str):
     session_user = session.exec(statement).first()
     return session_user
 
-async def get_current_user(session: SessionDep, token: Annotated[User, Depends(oauth2_scheme)]):
+async def get_current_user(session: SessionDep, token: Annotated[str, Depends(oauth2_scheme)]):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -38,8 +38,8 @@ async def get_current_user(session: SessionDep, token: Annotated[User, Depends(o
         raise credentials_exception
     return user
 
-async def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]):
-    if current_user.disabled:
+async def get_current_active_user(current_user: Annotated[UserModel, Depends(get_current_user)]):
+    if not current_user.is_active:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Inactive user",
